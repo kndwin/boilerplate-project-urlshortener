@@ -29,15 +29,22 @@ mongoose.connect(
 
 const Schema = mongoose.Schema;
 const urlSchema = new Schema ({
-    urlGiven: {
+    "urlGiven": {
         type: String,
         required: true
-    },
-    urlShortened: String
+    }
 });
 const Url = mongoose.model('Url', urlSchema);
-
 app.use(cors());
+
+var done = (err, data) => {
+    if (err) {
+        console.log(err);
+    } else {
+        console.log("Completed: " + data);
+    }
+}
+
 
 /** this project needs to parse POST bodies **/
 // you should mount the body-parser here
@@ -58,11 +65,16 @@ app.get("/api/hello", function (req, res) {
   res.json({greeting: 'hello API'});
 });
 
-app.route("/api/shorturl/new").get(function(req, res){
-    res.json({ "url": req.query })
-}).post(function(req, res){
-    console.log(req.body)
+app.post("/api/shorturl/new", function( req,res ) {
+    Url.create(
+        { "urlGiven": req.body.url}, 
+        (err, data) => (err ? done(err) : done(null, data))
+    );
     res.json({ "url": req.body })
+})
+
+app.get("/api/shorturl/:id", function (req, res) {
+    res.json({ "url": req.params.id });
 })
 
 app.listen(port, function () {
