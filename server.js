@@ -76,9 +76,12 @@ app.post("/api/shorturl/new", function( req,res ) {
             }, 
             (err, data) => (err ? done(err) : done(null, data))
         );
+        res.json({ 
+            "orginal_url": req.body.url,
+            "short_url": "https://kndwin-fcc-urlshortner.herokuapp.com/api/shorturl/" + count
+        })
         err ? done(err) : done(null, count) 
     });
-    res.json({ "url": req.body })
 })
 
 app.get("/api/shorturl/:id", function (req, res) {
