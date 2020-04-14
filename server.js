@@ -32,7 +32,8 @@ const urlSchema = new Schema ({
     "urlGiven": {
         type: String,
         required: true
-    }
+    },
+    "shortUrl": Number
 });
 const Url = mongoose.model('Url', urlSchema);
 app.use(cors());
@@ -60,16 +61,23 @@ app.get('/', function(req, res){
 });
 
   
-// your first API endpoint... 
+// your first API endpoint...
 app.get("/api/hello", function (req, res) {
   res.json({greeting: 'hello API'});
 });
 
+
 app.post("/api/shorturl/new", function( req,res ) {
-    Url.create(
-        { "urlGiven": req.body.url}, 
-        (err, data) => (err ? done(err) : done(null, data))
-    );
+    Url.countDocuments( 'urls', (err, count) => { 
+        Url.create( 
+            { 
+            "urlGiven": req.body.url,
+            "shortUrl": count
+            }, 
+            (err, data) => (err ? done(err) : done(null, data))
+        );
+        err ? done(err) : done(null, count) 
+    });
     res.json({ "url": req.body })
 })
 
