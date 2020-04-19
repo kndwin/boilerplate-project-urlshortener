@@ -85,7 +85,11 @@ app.post("/api/shorturl/new", function( req,res ) {
 })
 
 app.get("/api/shorturl/:id", function (req, res) {
-    res.json({ "url": req.params.id });
+    Url.findOne( { shortUrl: req.params.id }, (err, urlFound) => {
+        res.redirect(urlFound.urlGiven);
+        err ? done(err) : done(null, urlFound);
+    })
+    
 })
 
 app.listen(port, function () {
